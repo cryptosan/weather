@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" ng-app="ang">
+    <head>
+        <meta charset="utf-8">
+        <title>Yahoo! Weather!</title>
+    </head>
+    <body>
+        <div ng-controller="customersController">
+            <h1 ng-bind='datas.title'></h1>
+            <p ng-bind='datas.description'></p>
+            오늘의 일출 : {{ datas.astronomy.sunrise }} <br>
+            오늘의 일몰 : {{ datas.astronomy.sunset }} <br>
+            <ul>
+                <li ng-repeat='data in datas.item.forecast'>
+                    {{ data.date + ', ' + data.day }}
+                    <ul>
+                        <li>날씨: {{ data.text }}</li>
+                    </ul>
+                </li>
+            </ul>
+            마지막 업데이트 : {{ datas.lastBuildDate }}
+        </div>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.10/angular.min.js"></script>
+    <script>
+    angular.module('ang', []).controller('customersController', function ($scope, $http) {
+        $http.get("https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22seoul%2Ckr%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys").success(function (response) {
+            $scope.datas = response.query.results.channel;
+        });
+    });
+    </script>
+</html>
